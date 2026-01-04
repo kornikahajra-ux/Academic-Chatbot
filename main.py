@@ -1,7 +1,8 @@
 #from openai import OpenAI
 #client = OpenAI(base_url="https://openrouter.ai/api/v1", 
-#               api_key = "")
+#               api_key = "<OPENROUTER_API_KEY>",)
 
+import os
 import base64
 from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import FileResponse, JSONResponse
@@ -13,7 +14,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="<OPENROUTER_API_KEY>",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
 )
 
 @app.get("/")
@@ -39,3 +40,4 @@ async def chat(message: str = Form(...), file: UploadFile = File(None)):
         ]
     )
     return {"response": response.choices[0].message.content}
+
