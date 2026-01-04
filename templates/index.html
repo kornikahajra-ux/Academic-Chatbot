@@ -19,6 +19,10 @@
         const form = document.getElementById('chat-form');
         const history = document.getElementById('chat-history');
 
+        let chatHistory = [
+            {"role": "system", "content": "Academic Tutor to help analyse notes and diagrams and answer doubts and questions."}
+        ];
+        
         form.onsubmit = async (e) => {
             e.preventDefault();
             const text = document.getElementById('user-input').value;
@@ -29,14 +33,18 @@
 
             const formData = new FormData();
             formData.append('message', text);
+            formData.append('history', JSON.stringify(chatHistory));
             if (file) formData.append('file', file);
 
             const res = await fetch('/chat', { method: 'POST', body: formData });
             const data = await res.json();
-            
+
+            chatHistory.push({"role": "user", "content": text});
+            chatHistory.push({"role": "assistant", "content": data.response});
             history.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
             window.scrollTo(0, document.body.scrollHeight);
         };
     </script>
 </body>
+
 </html>
