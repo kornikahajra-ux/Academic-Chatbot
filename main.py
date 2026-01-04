@@ -33,12 +33,13 @@ async def chat(message: str = Form(...), file: UploadFile = File(None)):
         })
 
     response = client.chat.completions.create(
-        model="qwen/qwen2.5-vl-72b-instruct:free",
+        model="qwen/qwen-2.5-vl-7b-instruct:free",
         messages=[
             {"role": "system", "content": "Academic Tutor to help analyse notes and diagrams and answer doubts and questions."},
             {"role": "user", "content": content}
         ]
     )
     return {"response": response.choices[0].message.content}
+
 
 
