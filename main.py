@@ -8,6 +8,7 @@ from fastapi import FastAPI, File, UploadFile, Form
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from openai import OpenAI
+import json
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -41,6 +42,7 @@ async def chat(message: str = Form(...),history: str = Form(...), file: UploadFi
         ]
     )
     return {"response": response.choices[0].message.content}
+
 
 
 
