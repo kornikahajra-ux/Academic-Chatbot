@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Academic Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Academic Chatbot</h1>
+    
+    <div id="chat-history"></div>
+
+    <form id="chat-form">
+        <input type="file" id="file-input" accept="image/*">
+        <input type="text" id="user-input" placeholder="Type here..." required>
+        <button type="submit" id="send-btn">Send</button>
+    </form>
+
+    <script>
+        const form = document.getElementById('chat-form');
+        const history = document.getElementById('chat-history');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('user-input').value;
+            const file = document.getElementById('file-input').files[0];
+            
+            history.innerHTML += `<p><b>You:</b> ${text}</p>`;
+            document.getElementById('user-input').value = '';
+
+            const formData = new FormData();
+            formData.append('message', text);
+            if (file) formData.append('file', file);
+
+            const res = await fetch('/chat', { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            history.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+    </script>
+</body>
+</html>
