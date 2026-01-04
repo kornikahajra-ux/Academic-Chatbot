@@ -17,7 +17,7 @@
 
     <script>
         const form = document.getElementById('chat-form');
-        const history = document.getElementById('chat-history');
+        const historyDiv = document.getElementById('chat-history');
 
         let chatHistory = [
             {"role": "system", "content": "Academic Tutor to help analyse notes and diagrams and answer doubts and questions."}
@@ -28,7 +28,7 @@
             const text = document.getElementById('user-input').value;
             const file = document.getElementById('file-input').files[0];
             
-            history.innerHTML += `<p><b>You:</b> ${text}</p>`;
+            historyDiv.innerHTML += `<p><b>You:</b> ${text}</p>`;
             document.getElementById('user-input').value = '';
 
             const formData = new FormData();
@@ -41,10 +41,11 @@
 
             chatHistory.push({"role": "user", "content": text});
             chatHistory.push({"role": "assistant", "content": data.response});
-            history.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
+            historyDiv.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
             window.scrollTo(0, document.body.scrollHeight);
         };
     </script>
 </body>
 
 </html>
+
