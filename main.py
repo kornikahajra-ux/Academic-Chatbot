@@ -36,10 +36,7 @@ async def chat(message: str = Form(...),history: str = Form(...), file: UploadFi
     messages.append({"role": "user", "content": content})
     response = client.chat.completions.create(
         model="qwen/qwen-2.5-vl-7b-instruct:free",
-        messages=[
-            {"role": "system", "content": "Academic Tutor to help analyse notes and diagrams and answer doubts and questions."},
-            {"role": "user", "content": content}
-        ]
+        messages=messages
     )
     return {"response": response.choices[0].message.content}
 
