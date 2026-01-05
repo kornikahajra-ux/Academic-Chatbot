@@ -15,37 +15,44 @@
         <button type="submit" id="send-btn">Send</button>
     </form>
 
-    <script>
-        const form = document.getElementById('chat-form');
-        const historyDiv = document.getElementById('chat-history');
+<script>
+    const form = document.getElementById('chat-form');
+    const display = document.getElementById('chat-history'); // Use one name for the display
 
-        let chatHistory = [
-            {"role": "system", "content": "Academic Tutor to help analyse notes and diagrams and answer doubts and questions."}
-        ];
+    // 1. Initial history
+    let chatHistory = [
+        {"role": "system", "content": "Academic Tutor to help analyse notes and diagrams and answer doubts and questions."}
+    ];
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('user-input');
+        const fileInput = document.getElementById('file-input');
+        const text = input.value;
+        const file = fileInput.files[0];
+
+        display.innerHTML += `<p><b>You:</b> ${text}</p>`;
+        input.value = '';
+
+        const formData = new FormData();
+        formData.append('message', text);
         
-        form.onsubmit = async (e) => {
-            e.preventDefault();
-            const text = document.getElementById('user-input').value;
-            const file = document.getElementById('file-input').files[0];
-            
-            historyDiv.innerHTML += `<p><b>You:</b> ${text}</p>`;
-            document.getElementById('user-input').value = '';
+        formData.append('history', JSON.stringify(chatHistory));
+        if (file) formData.append('file', file);
 
-            const formData = new FormData();
-            formData.append('message', text);
-            formData.append('history', JSON.stringify(chatHistory));
-            if (file) formData.append('file', file);
+        const res = await fetch('/chat', { method: 'POST', body: formData });
+        const data = await res.json();
 
-            const res = await fetch('/chat', { method: 'POST', body: formData });
-            const data = await res.json();
+        chatHistory.push({"role": "user", "content": text});
+        chatHistory.push({"role": "assistant", "content": data.response});
 
-            chatHistory.push({"role": "user", "content": text});
-            chatHistory.push({"role": "assistant", "content": data.response});
-            historyDiv.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
-            window.scrollTo(0, document.body.scrollHeight);
-        };
-    </script>
+        display.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
+        window.scrollTo(0, document.body.scrollHeight);
+         
+    };
+</script>
 </body>
 
 </html>
+
 
