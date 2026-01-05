@@ -36,20 +36,23 @@ async def chat(message: str = Form(...),history: str = Form(...), file: UploadFi
             "image_url": {"url": f"data:{file.content_type};base64,{base64_image}"}
         })
     elif file.content_type == 'application/pdf':
-            images = convert_from_bytes(file_bytes, first_page=1, last_page=1)
-            if images:
-                img_byte_arr = io.BytesIO()
-                images[0].save(img_byte_arr, format='PNG')
-                base64_pdf_img = base64.b64encode(img_byte_arr.getvalue()).decode('utf-8')
-                content.append({
-                    "type": "image_url",
-                    "image_url": {"url": f"data:image/png;base64,{base64_pdf_img}"}
-                })
+            doc = fitz.open(stream=file_bytes, filetype="pdf")
+            page = doc[0]
+            pix = page.get_pixmap()
+            img_data = pix.tobytes("png")
+            base64_pdf_img = base64.b64encode(img_data).decode('utf-8')
+            content.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:image/png;base64,{base64_pdf_img}"}
+            })
+            doc.close()
+        
     messages.append({"role": "user", "content": content})
     response = client.chat.completions.create(
         model="qwen/qwen-2.5-vl-7b-instruct:free",
         messages=messages
     )
     return {"response": response.choices[0].message.content}
+
 
 
